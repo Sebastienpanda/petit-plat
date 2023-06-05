@@ -8,6 +8,10 @@ body,
 html {
   font-family: "Manrope", sans-serif;
 }
+ul,
+li {
+  list-style: none;
+}
 
 h1,
 h2,
@@ -17,14 +21,37 @@ h5,
 h6 {
   font-family: "Anton", sans-serif;
 }
+img,
+video {
+  max-width: 100%;
+  width: 100%;
+  max-height: 100%;
+  height: 100%;
+}
 body {
   background-color: #ededed;
 }
 header {
-  background: url("../header/header.jpg");
-  background-size: cover;
-  width: 100%;
-  height: 667px;
+  position: relative;
+  height: 600px;
+}
+header img {
+  object-fit: cover;
+}
+.containerImg {
+  position: absolute;
+  top: 0;
+  padding: 69px 0 0 69px;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.containerHeader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .content {
   height: 100%;
@@ -34,13 +61,24 @@ header {
 header h1 {
   color: #ffd15b;
   line-height: 66px;
-  margin-bottom: 30px;
+  font-size: 44px;
+  font-weight: 400;
+  line-height: 66px;
+  text-align: center;
+  width: 75%;
+  margin: 0 auto 30px;
 }
-
+form {
+  position: relative;
+}
 form > input {
   height: 72px;
+  width: 954px;
+  border-radius: 11px;
+  padding-left: 25px;
 }
-.icon {
+
+form .icon {
   position: absolute;
   top: 50%;
   background: #1b1b1b;
@@ -54,10 +92,13 @@ form > input {
   align-items: center;
   transform: translateY(-50%);
   margin-right: 10px;
+  transition: background-color 250ms ease-in-out;
+  cursor: pointer;
 }
-.containerImg {
-  padding: 69px 0 0 69px;
+form .icon:hover {
+  background-color: #ffd15b;
 }
+
 .containerCard {
   margin-top: 45px;
   display: flex;
@@ -70,6 +111,7 @@ form > input {
   border-radius: 21px;
   overflow: hidden;
   box-shadow: 0px 4px 34px 30px #0000000a;
+  position: relative;
 }
 .paddingElement {
   padding: 0 25px;
@@ -125,4 +167,157 @@ form > input {
   .cardElement {
     flex: 1 1 25%;
   }
+}
+.notFound {
+  font-size: 24px;
+  width: 100%;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.notFound p {
+  text-align: center;
+}
+.time {
+  position: absolute;
+  right: 20px;
+  top: 21px;
+  background-color: #ffd15b;
+  color: #1b1b1b;
+  border-radius: 14px;
+  padding: 5px 15px 5px 15px;
+  font-weight: 400;
+  font-size: 12px;
+}
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+}
+.totalRecipes {
+  color: #1b1b1b;
+  font-weight: 400;
+  font-size: 21px;
+}
+.wrapper {
+  width: 195px;
+}
+.select-btn,
+.options li {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.select-btn {
+  height: 65px;
+  font-size: 16px;
+  padding: 0 20px;
+  border-radius: 11px;
+  justify-content: space-between;
+  background: #fff;
+  font-weight: 500;
+  line-height: 21.86px;
+}
+.wrapper.active .select-btn {
+  border-radius: 11px 11px 0 0;
+}
+.select-btn i {
+  font-size: 16px;
+  transition: transform 250ms ease-in-out;
+}
+.wrapper.active .select-btn i {
+  transform: rotate(-180deg);
+}
+.contentSearch {
+  display: none;
+  background-color: #fff;
+  padding-top: 14px;
+  border-radius: 0 0 11px 11px;
+  margin-top: -14px;
+}
+.wrapper.active .contentSearch {
+  display: block;
+}
+.contentSearch .search {
+  position: relative;
+  padding: 0 16px 0;
+}
+.search i {
+  top: -8px;
+  right: 27px;
+  position: absolute;
+  line-height: 53px;
+  color: #999;
+  font-size: 16px;
+}
+.search input {
+  width: 163px;
+  height: 36px;
+  outline: none;
+  font-size: 17px;
+  border-radius: 2px;
+  border: 1px solid #c6c6c6;
+}
+.contentSearch .options {
+  margin-top: 26px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 7px;
+}
+.options::-webkit-scrollbar {
+  width: 7px;
+}
+.options::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+  border-radius: 25px;
+}
+.options::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 25px;
+}
+.options li {
+  height: 50px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19.12px;
+  border-radius: 5px;
+  padding: 0 16px;
+}
+.options li,
+.select {
+  transition: background-color 250ms ease-in-out;
+}
+.options li:hover,
+.select {
+  background-color: #ffd15b;
+}
+.containerSelect {
+  display: flex;
+  gap: 66px;
+}
+.tags {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 21px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 19px;
+}
+
+.tags .tag {
+  background-color: #ffd15b;
+  border-radius: 10px;
+  padding: 17px 18px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.tagClose {
+  color: #1b1b1b;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
 }

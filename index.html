@@ -4,8 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,35 +15,69 @@
 
 <body>
   <header>
+    <img src="./assets/header/header.jpg" alt="">
     <div class="containerImg">
       <img src="./assets/header/Logo.svg" alt="Logo des petits plats">
     </div>
 
-    <div class="container d-flex justify-content-center align-items-center content">
-      <div>
-        <h1 class="text-center">CHERCHEZ PARMI PLUS DE 1500 RECETTES
-          DU QUOTIDIEN,SIMPLES ET DÉLICIEUSES </h1>
-        <form class="position-relative">
-          <input class="form-control " type="search" id="search"
-            placeholder="Rechercher une recette, un ingrédient, ...">
-          <div class="icon" id="icon">
-            <svg width="28" height="29" viewBox="0 0 28 29" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="10" cy="10.4219" r="9.5" stroke="white" />
-              <line x1="18.3536" y1="19.0683" x2="27.3536" y2="28.0683" stroke="white" />
-            </svg>
-          </div>
-        </form>
-      </div>
+    <div class="containerHeader">
+      <h1>CHERCHEZ PARMI PLUS DE 1500 RECETTES
+        DU QUOTIDIEN,SIMPLES ET DÉLICIEUSES </h1>
+      <form>
+        <input type="search" id="search" placeholder="Rechercher une recette, un ingrédient, ...">
+        <div class="icon" id="icon">
+          <svg width="28" height="29" viewBox="0 0 28 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="10" cy="10.4219" r="9.5" stroke="white" />
+            <line x1="18.3536" y1="19.0683" x2="27.3536" y2="28.0683" stroke="white" />
+          </svg>
+      </form>
+    </div>
 
     </div>
 
   </header>
   <main>
-    <section id="containerCard" class="container mx-auto containerCard">
+    <section class="container">
+      <div class="topbar">
+        <div class="containerTags">
+          <div class="containerSelect">
+            <div class="wrapper wrapperIngredient">
+              <div class="select-btn" id="ingrédient">
+                <span>Ingrédients</span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </div>
+              <div class="contentSearch">
+                <div class="search">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input type="search">
+                </div>
+                <ul id="options" class="options"></ul>
+              </div>
+            </div>
+            <div class="wrapper wrapperAppliance">
+              <div class="select-btn" id="appareils">
+                <span>Appareils</span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </div>
+              <div class="contentSearch">
+                <div class="search">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input type="search">
+                </div>
+                <ul id="options" class="options"></ul>
+              </div>
+            </div>
+          </div>
+          <div class="tags"></div>
+        </div>
+        <span id="totalRecipes" class="totalRecipes"></span>
+      </div>
 
+      <div id="containerCard" class="containerCard"></div>
     </section>
   </main>
-  <script src="./assets/js/main.js" defer type="module"></script>
+  <script src="./assets/js/main.js" type="module" defer></script>
+  <script src="./assets/js/select.js" type="module" defer></script>
 </body>
 
 </html>
