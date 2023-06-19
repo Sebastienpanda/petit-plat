@@ -14,8 +14,7 @@ function addIngredient(selectIngredient) {
   options.innerHTML = "";
   for (const recipe of recipes) {
     for (const ingredient of recipe.ingredients) {
-      let isSelected =
-        ingredient.ingredient === selectIngredient ? "select" : "";
+      let isSelected = ingredient.ingredient === selectIngredient ? "selected" : "";
       let li = document.createElement("li");
       li.textContent = ingredient.ingredient;
       li.className = isSelected;
@@ -39,9 +38,7 @@ searchInput.addEventListener("keyup", () => {
   let searchedValue = searchInput.value.toLowerCase().trim();
   let filteredIngredients = recipes
     .flatMap((recipe) => recipe.ingredients)
-    .filter((ingredient) =>
-      ingredient.ingredient.toLowerCase().includes(searchedValue)
-    )
+    .filter((ingredient) => ingredient.ingredient.toLowerCase().includes(searchedValue))
     .map((ingredient) => ingredient.ingredient);
 
   options.innerHTML = "";
@@ -64,7 +61,7 @@ searchInput.addEventListener("keyup", () => {
 function addAppliance(selectedAppliance) {
   optionsAppliance.innerHTML = "";
   for (const recipe of recipes) {
-    let isSelected = recipe.appliance === selectedAppliance ? "select" : "";
+    let isSelected = recipe.appliance === selectedAppliance ? "selected" : "";
     let li = document.createElement("li");
     li.textContent = recipe.appliance;
     li.className = isSelected;
@@ -87,9 +84,7 @@ searchInputAppliance.addEventListener("keyup", () => {
   let searchedValueAppliance = searchInputAppliance.value.toLowerCase().trim();
   let filteredAppliance = recipes
     .map((recipe) => recipe.appliance)
-    .filter((appliance) =>
-      appliance.toLowerCase().includes(searchedValueAppliance)
-    );
+    .filter((appliance) => appliance.toLowerCase().includes(searchedValueAppliance));
 
   optionsAppliance.innerHTML = "";
 

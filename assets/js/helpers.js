@@ -76,6 +76,7 @@ export function hasIngredientMatch(ingredients, searchTerm) {
   }
   return false;
 }
+
 export function displayRecipes(recipeData, searchTerm) {
   totalRecipes.innerHTML = `${recipeData.length} recettes`;
   let recipesHtml = "";
