@@ -1,4 +1,5 @@
 import { Recipes } from "../factories/Recipes.js";
+import { Select } from "../factories/Select.js";
 
 const recipes = new Recipes();
 
@@ -15,7 +16,6 @@ const debounce = (callback, timeout = 200) => {
 };
 
 const searchRecipes = (searchTerms) => {
-  console.log("Debounce callback searchRecipes", searchTerms);
   const result = recipes.searchRecipes(searchTerms);
   recipes.displaySearchResult({
     searchTerms: searchTerms,
@@ -28,7 +28,6 @@ const initialize = () => {
 
   searchValue.addEventListener("input", () => {
     const searchTerms = searchValue.value;
-    console.log("Search :", searchTerms);
     const callSearch = debounce(() => {
       searchRecipes(searchTerms);
     }, 300);
@@ -43,5 +42,5 @@ const initialize = () => {
 document.addEventListener("DOMContentLoaded", () => {
   initialize();
   recipes.displayRecipes();
-  console.log("OK");
+  new Select();
 });

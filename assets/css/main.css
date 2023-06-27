@@ -250,9 +250,11 @@ body {
   .recipes {
     flex-direction: initial;
     flex-wrap: wrap;
+    justify-content: center;
   }
   .recipe {
-    flex: 1 1 380px;
+    max-width: 380px;
+    width: 100%;
   }
 }
 
@@ -264,4 +266,124 @@ body {
     gap: 40px;
     justify-content: initial;
   }
+}
+
+/* Select */
+
+.topbar {
+  margin-top: 21px;
+  display: flex;
+  gap: 66px;
+  align-items: flex-start;
+}
+
+.containerSelects {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 33px;
+  position: relative;
+  z-index: 1;
+}
+
+.select {
+  max-width: 195px;
+  width: 195px;
+  font-size: 1.6em;
+  font-weight: 500;
+  color: #1b1b1b;
+  background: #ffffff;
+  border-radius: 11px;
+  cursor: pointer;
+}
+
+.select-btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 65px;
+  padding: 0 16px;
+}
+
+.subtitle,
+.subtitle i {
+  font-size: 1.6em;
+}
+.subtitle i {
+  width: 13px;
+  height: 6px;
+}
+
+.select-btn i {
+  font-size: 16px;
+  transition: transform 250ms ease-in-out;
+}
+
+.select.active .select-btn i {
+  transform: rotate(-180deg);
+}
+
+.content {
+  display: none;
+  margin-top: 15px;
+  background: #ffffff;
+  border-radius: 11px;
+}
+
+.select.active .content {
+  display: block;
+}
+
+.content .search {
+  position: relative;
+  padding: 0 16px;
+}
+
+.search i {
+  position: absolute;
+  right: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.search input {
+  height: 36px;
+  width: 100%;
+}
+
+.content .options {
+  margin-top: 15px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.options::-webkit-scrollbar {
+  width: 7px;
+}
+.options::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+  border-radius: 25px;
+}
+.options::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 25px;
+  color: #1b1b1b;
+}
+
+.options li {
+  font-size: 1.4em;
+  color: #1b1b1b;
+  font-weight: 400;
+  transition: background-color 250ms ease-in-out;
+  padding: 9px 0;
+  padding-left: 16px;
+}
+
+.options li:hover {
+  background: #ffd15b;
+}
+
+.selected {
+  background: #ffd15b;
 }
