@@ -2,6 +2,7 @@ import { Recipes } from "../factories/Recipes.js";
 import { Select } from "../factories/Select.js";
 
 const recipes = new Recipes();
+const select = new Select();
 
 const debounce = (callback, timeout = 200) => {
   let debounceTimeoutId = null;
@@ -21,6 +22,7 @@ const searchRecipes = (searchTerms) => {
     searchTerms: searchTerms,
     result: result,
   });
+  select.updateSelectListItems(result);
 };
 
 const initialize = () => {
@@ -42,5 +44,5 @@ const initialize = () => {
 document.addEventListener("DOMContentLoaded", () => {
   initialize();
   recipes.displayRecipes();
-  new Select();
+  select;
 });

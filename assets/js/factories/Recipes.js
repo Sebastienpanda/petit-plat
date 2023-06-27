@@ -1,4 +1,5 @@
 import { recipes } from "../../../data/recipes.js";
+import { Select } from "./Select.js";
 
 export class Recipes {
   #data = [];
@@ -69,14 +70,8 @@ export class Recipes {
     return false;
   }
 
-  /**
-   *
-   * @param  searchTerms {string}
-   * @returns {*[]}
-   */
   searchRecipes(searchTerms) {
     const filteredRecipes = [];
-    console.log(searchTerms);
     searchTerms = searchTerms.trim().toLowerCase();
     for (const recipe of this.#data) {
       const { name, description, ingredients } = recipe;
