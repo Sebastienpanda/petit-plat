@@ -62,16 +62,30 @@
     <main class="containerxl">
       <section class="topbar">
         <div class="select" id="selectIngredients">
-          <div class="select-btn" id="selectBtnIngredients">
-            <span class="subtitle">Ingrédients</span>
+          <div class="select__btn">
+            <span class="select__btn-subtitle">Ingrédients</span>
             <i class="fa-solid fa-chevron-down"></i>
           </div>
-          <div class="content contentIngredient">
-            <div class="search">
-              <i class="fa-solid fa-magnifying-glass"></i>
-              <input type="text" id="ingredients" />
+          <div class="select__content">
+            <div class="select__content__search">
+              <i class="select-icon fa-solid fa-magnifying-glass"></i>
+              <input class="select__content__search-inputSearch" type="text" />
             </div>
-            <ul id="optionsIngredients" class="options"></ul>
+            <ul class="select__content-options"></ul>
+          </div>
+        </div>
+
+        <div class="select" id="selectAppareils">
+          <div class="select__btn">
+            <span class="select__btn-subtitle">Appareils</span>
+            <i class="select-icon fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="select__content">
+            <div class="select__content__search">
+              <i class="select-icon fa-solid fa-magnifying-glass"></i>
+              <input class="select__content__search-inputSearch" type="text" />
+            </div>
+            <ul class="select__content-options"></ul>
           </div>
         </div>
       </section>

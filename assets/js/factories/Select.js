@@ -3,68 +3,134 @@ import { recipes } from "../../../data/recipes.js";
 export class Select {
   #select = null;
   #selectBtn = null;
-  #optionsIngredients = null;
-  #items = null;
-  #selectIngredient = null;
-  #selectBtnIngredients = null;
+  #options = null;
+  #optionsItems = null;
+  #searchInput = null;
+
   #selectedItem = "";
 
   #onSearchEvent = null;
 
-  /**
-   *
-   * @type {{name:string, isSelected: boolean}[]}
-   */
-  #listItems = [];
+  #listItem = [];
 
-  constructor(searchEventCallback = null) {
-    this.#select = document.querySelectorAll(".select");
-    this.#selectIngredient = document.querySelector("#selectIngredients");
-    this.#selectBtnIngredients = document.querySelector(
-      "#selectBtnIngredients"
+  constructor({
+    selectElement = null,
+    initialListItem,
+    defaultSelectLabel = "Sélection...",
+    searchEventCallback = null,
+  }) {
+    if (selectElement === null) {
+      throw Error("HTML Select is required !");
+    }
+    if (typeof selectElement === "String") {
+      this.#select = selectElement;
+    } else {
+      this.#select = document.querySelector(selectElement);
+    }
+
+    this.#selectBtn = this.#select.querySelector(".select__btn");
+
+    const content = this.#select.querySelector(".select__content");
+
+    this.#options = content.querySelector(".select__content-options");
+    this.#searchInput = content.querySelector(
+      ".select__content__search > .select__content__search-inputSearch"
     );
-    this.#selectBtn = document.querySelectorAll(".select-btn");
-    this.#optionsIngredients = document.querySelector("#optionsIngredients");
-    this.searchInput = document.querySelector("#ingredients");
+
+    this.#defaultLabel = defaultSelectLabel;
 
     this.#onSearchEvent = searchEventCallback; //onSearch(ingredientSelected);
 
-    this.init();
+    this.#init();
+
+    this.#listItem = [...initialListItem];
+    this.#createListItem(this.#listItem);
   }
 
-  init() {
-    this.updateSelectListItems(recipes);
-    this.setupEventListeners();
+  #init() {
+    this._setupEventListeners();
   }
 
-  handleIngredientClick(selectedLi) {
-    this.searchInput.value = "";
+  #createListItem(listOfItems) {
+    this.#options.innerHTML = "";
+    for (const item of listOfItems) {
+      this._createItem(item);
+    }
+    this.#optionsItems = this.#options.querySelectorAll("li");
+  }
 
-    for (let li of this.#items) {
+  _setupEventListeners() {
+    this.#selectBtn.addEventListener("click", () => {
+      this.#select.classList.toggle("select--active");
+    });
+    this.#searchInput.addEventListener("input", () => {
+      this._searchItems();
+    });
+  }
+
+  _handleItemClick(currentLi) {
+    const btnLabel = this.#selectBtn.firstElementChild;
+
+    if (currentLi.classList.contains("selected")) {
+      currentLi.classList.remove("selected");
+      this.#select.classList.remove("select--active");
+      this.#searchInput.value = "";
+      btnLabel.innerText = this.#defaultLabel;
+    } else {
+      for (const li of this.#optionsItems) {
+        li.classList.remove("selected");
+      }
+      currentLi.classList.add("selected");
+      btnLabel.innerText = currentLi.innerText;
+    }
+
+    this.#listItem.map((item) => {
+      return {
+        name: item.name,
+        isSelected: item.name === currentLi.innerText && !item.isSelected,
+      };
+    });
+
+    if (this.#onSearchEvent) {
+      this.#onSearchEvent(this.#selectedItem);
+    }
+  }
+
+  _createItem({ name, isSelected }) {
+    let li = document.createElement("li");
+    li.textContent = name;
+    li.className = isSelected ? "selected" : "";
+    li.addEventListener("click", () => {
+      this._handleItemClick(li);
+    });
+    this.#options.appendChild(li);
+  }
+
+  _unselectAllItems() {
+    console.log(this.#optionsItems);
+    for (const li of this.#optionsItems) {
       if (li.classList.contains("selected")) {
         li.classList.remove("selected");
       }
     }
-
-    selectedLi.className = "selected";
-    this.#selectIngredient.classList.remove("active");
-    this.#selectBtnIngredients.firstElementChild.innerText =
-      selectedLi.innerText;
-
-    this.#listItems.forEach((item) => (item.isSelected = false));
-
-    const idx = this.#listItems.findIndex((item) => {
-      return item.name === selectedLi.innerText && !item.isSelected;
+    this.#listItem.map((item) => {
+      return {
+        name: item.name,
+        isSelected: false,
+      };
     });
+  }
 
-    if (idx >= 0) {
-      this.#listItems[idx].isSelected = true;
-    }
+  _searchItems() {
+    const searchedValue = this.#searchInput.value.toLowerCase().trim();
+    const filteredItems = this.#listItem.filter((item) =>
+      item.name.toLowerCase().includes(searchedValue)
+    );
 
-    this.#selectedItem = selectedLi.innerText;
-
-    if (this.#onSearchEvent) {
-      this.#onSearchEvent(this.#selectedItem);
+    if (filteredItems.length > 0) {
+      this.#createListItem(filteredItems);
+    } else {
+      this.#options.innerHTML = "<p> Aucun ingrédient </p>";
     }
   }
 
@@ -72,104 +138,16 @@ export class Select {
     return this.#selectedItem;
   }
 
-  createSelectItem(ingredient) {
-    let li = document.createElement("li");
-    li.textContent = ingredient.name;
-    li.className = ingredient.isSelected ? "selected" : "";
-    li.addEventListener("click", () => {
-      this.handleIngredientClick(li);
-    });
-    this.#optionsIngredients.appendChild(li);
-
-    //let isSelected = ingredient.ingredient === selectIngredient
+  updateListItem(newListItem) {
+    this.#listItem = [...newListItem];
+    this.#createListItem(this.#listItem);
   }
 
-  createSelectListItems(listOfIngredients) {
-    this.#optionsIngredients.innerHTML = "";
-    for (const ingredient of listOfIngredients) {
-      this.createSelectItem(ingredient);
-    }
-    this.#items = this.#optionsIngredients.querySelectorAll("li");
-  }
+  reset() {
+    //this.#optionsItems = null;
 
-  loadIngredients(fromRecipes) {
-    const ingredients = [];
-    for (const recipe of fromRecipes) {
-      for (const ingredient of recipe.ingredients) {
-        ingredients.push({
-          name: ingredient.ingredient,
-          isSelected: false,
-        });
-      }
-    }
-    return ingredients;
-  }
-
-  updateSelectListItems(newListItems) {
-    this.#listItems = this.loadIngredients(newListItems);
-    this.createSelectListItems(this.#listItems);
-  }
-
-  /*  resultRecipes(resultRecipes) {
-    this.#optionsIngredients.innerHTML = "";
-    const filteredIngredients = [];
-    for (const recipe of resultRecipes) {
-      for (const ingredient of recipe.ingredients) {
-        let isSelected =
-          ingredient.ingredient === resultRecipes ? "selected" : "";
-        let li = document.createElement("li");
-        li.textContent = ingredient.ingredient;
-        li.className = isSelected;
-        li.addEventListener("click", () => {
-          this.updateIngredient(li);
-        });
-        this.#optionsIngredients.appendChild(li);
-        filteredIngredients.push(ingredient.ingredient);
-      }
-    }
-
-    if (filteredIngredients.length > 0) {
-      filteredIngredients.forEach((ingredientName) => {
-        const li = document.createElement("li");
-        li.textContent = ingredientName;
-        li.addEventListener("click", () => {
-          this.updateIngredient(li);
-        });
-        this.#optionsIngredients.appendChild(li);
-      });
-    } else {
-      this.#optionsIngredients.innerHTML = "<p>Aucun ingrédient</p>";
-    }
-  } */
-
-  searchIngredients() {
-    let searchedValue = this.searchInput.value.toLowerCase().trim();
-    const filteredIngredients = this.#listItems.filter((ingredient) =>
-      ingredient.name.toLowerCase().includes(searchedValue)
-    );
-    // let filteredIngredients = recipes
-    //   .flatMap((recipe) => recipe.ingredients)
-    //   .filter((ingredient) =>
-    //     ingredient.ingredient.toLowerCase().includes(searchedValue)
-    //   )
-    //   .map((ingredient) => ingredient.ingredient);
-
-    if (filteredIngredients.length > 0) {
-      this.createSelectListItems(filteredIngredients);
-    } else {
-      this.#optionsIngredients.innerHTML = "<p> Aucun ingrédient </p>";
-    }
-  }
-
-  setupEventListeners() {
-    this.#select.forEach((select, index) => {
-      const selectBtn = this.#selectBtn[index];
-      selectBtn.addEventListener("click", () => {
-        select.classList.toggle("active");
-      });
-    });
-    this.searchInput.addEventListener("input", () => {
-      this.searchIngredients();
-    });
+    this.#selectedItem = "";
+    this._unselectAllItems();
+    this.#createListItem(this.#listItem);
   }
 }
