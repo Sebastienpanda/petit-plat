@@ -64,11 +64,11 @@ const searchRecipes = (searchTerms) => {
   searchResult = recipes.searchRecipes(searchTerms);
   recipes.displaySearchResult({
     searchTerms: searchTerms,
-    result: result,
+    result: searchResult,
   });
 
-  selectIngredients.updateListItem(loadIngredients(result));
-  selectAppareils.updateListItem(loadAppareils(result));
+  selectIngredients.updateListItem(loadIngredients(searchResult));
+  selectAppareils.updateListItem(loadAppareils(searchResult));
   //selectUstensiles.updateListItem(loadUstensiles(result));
 };
 
