@@ -124,8 +124,12 @@ export class Recipes {
     this.#recipeContainer.innerHTML = "";
     this.#recipeContainer.innerHTML = `
       <div class="notFound">
-        <p>Aucune recette ne contient <strong>${searchTerms}</strong>. Vous pouvez chercher "tarte aux pommes", "poisson"</p>
+        <p>Aucune recette contient <strong>${searchTerms}</strong>. Vous pouvez chercher "tarte aux pommes", "poisson"</p>
       </div>
       `;
+  }
+
+  get data() {
+    return this.#data;
   }
 }
