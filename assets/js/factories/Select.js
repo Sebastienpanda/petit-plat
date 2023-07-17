@@ -6,7 +6,7 @@ export class Select {
   #options = null;
   #optionsItems = null;
   #searchInput = null;
-
+  #defaultLabel = "";
   #selectedItem = "";
 
   #onSearchEvent = null;
