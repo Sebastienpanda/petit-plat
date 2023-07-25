@@ -8,7 +8,6 @@ export class Recipes {
 
   constructor() {
     this.#data = [...recipes];
-    console.log("INITIAL DATA = ",this.#data);
     this.#recipeContainer = document.querySelector("#recipes");
     this.#totalRecipes = document.querySelector("#totalRecipes");
   }
@@ -62,15 +61,8 @@ export class Recipes {
   }
 
   _hasIngredientMatch(ingredients, searchTerm) {
-    console.log("******** hasIngredientMatch ******");
-    console.log("SEARCHTERM == ", searchTerm);
-    console.log("LIST OF INGREDIENT", ingredients);
     ingredients.map((anIngredient) => {
-      console.log("DATA = ", anIngredient);
       const { ingredient  } = anIngredient;
-      console.log("INGREDIENT LABEL == ", ingredient);
-      console.log("CHECK == ", ingredient.toLowerCase());
-      console.log("WITH == ", searchTerm.toLowerCase());
       if (ingredient.toLowerCase() === searchTerm.toLowerCase()) {
         return true;
       }
@@ -118,7 +110,6 @@ export class Recipes {
 
     searchTerms = searchTerms.trim();
     if (searchTerms !== "") {
-      console.log('GLOBAL SEARCH = ', searchTerms);
       this.#data.map((recipe) => {
         const { name, description } = recipe;
         const lowerCaseName = name.toLowerCase();
@@ -130,75 +121,48 @@ export class Recipes {
     }
 
     if (filteredRecipes.length === 0) {
-      console.log('GLOBAL SEARCH NO RESULT');
       filteredRecipes = [...this.#data]
     }
 
-    console.log("FILTERED RESULT = ", filteredRecipes)
 
     if ((ingredientTags !== null) && (ingredientTags.length > 0)) {
-      console.log("SEARCH INGREDIENT");
-    console.log("TAGS = ", ingredientTags);
-      filteredRecipes.map((recipe) => {
-        const { ingredients } = recipe;
-        console.log("====================================================================================");
-        console.log("INGREDIENTS = ", ingredients);
-        for ( const tag of ingredientTags) {
-          console.log("Search ==> ", tag);
-          const hasIngredient = this._hasIngredientMatch(ingredients, tag);
-          console.log("hasIngredient = ", hasIngredient);
-          if (hasIngredient) {
-            console.log("INGEDIENT FOUND : ", tag);
-            filteredRecipes.push(recipe);
-            break;
-          }
-          console.log("-----------------------------------------------------------------------------");
-        }
-        /*ingredientTags.forEach((tag) => {
-          console.log("Search ==> ", tag);
-          const hasIngredient = this._hasIngredientMatch(ingredients, tag);
-          console.log("hasIngredient = ", hasIngredient);
-          if (hasIngredient) {
-            console.log("INGEDIENT FOUND : ", tag);
-            filteredRecipes.push(recipe);
-          }*/
-
-        //})
-      })
-      console.log("==> INGREDIENT FILTERED RESULT <====== ", filteredRecipes)
+      let filteredRecipesByIngredient = []
+      ingredientTags.forEach((searchTerms) => {
+        const tempFilteredRecipes= filteredRecipes.filter((recipe) => {
+          const temp = recipe.ingredients.filter((ingredient) => {
+            return ingredient.ingredient.toLowerCase() === searchTerms.toLowerCase();
+          });
+          return temp.length > 0;
+        });
+        filteredRecipesByIngredient = [...filteredRecipesByIngredient, ...tempFilteredRecipes];
+      });
+      filteredRecipes = [...filteredRecipesByIngredient];
     }
 
     if ((appareilTags !== null) && (ingredientTags.length > 0)) {
-      console.log("APPAREIL SEARCH");
       filteredRecipes.map((recipe) => {
         const { appliance } = recipe;
         appareilTags.forEach((tag) => {
           const hasAppareil = this._hasAppareilMatch(appliance, tag);
           if (hasAppareil) {
-            console.log("APPAREIL FOUND : ", tag);
             filteredRecipes.push(recipe);
           }
         })
       })
-      console.log("==> APPAREILS FILTERED RESULT = ", filteredRecipes)
     }
 
 
     if ((ustensilTags !== null) && (ustensilTags.length > 0)) {
-      console.log("USTENSIL SEARCH");
       filteredRecipes.map((recipe) => {
         const { ustensils } = recipe;
         ustensilTags.forEach((tag) => {
           const hasUstensil = this._hasUstensilMatch(ustensils, tag);
           if (hasustensil) {
-            console.log('USTENSIL FOUND', tag);
             filteredRecipes.push(recipe);
           }
         })
       })
-      console.log("==> USTENSIL FILTERED RESULT = ", filteredRecipes)
     }
-    console.log("=====> FINAL FILTERED RESULT <===== ", filteredRecipes)
     this.displayRecipes(filteredRecipes);
   }
 
