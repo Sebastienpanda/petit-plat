@@ -6,37 +6,32 @@ const recipes = new Recipes();
 let selectIngredients, selectAppareils, selectUstensiles;
 let searchResult = [...recipes.data];
 let searchTerms = '';
-//===========================================================
-
 
 const removeDuplicateObjects = (array, property) => {
+
   const uniqueIds = [];
 
-  const unique = array.filter(element => {
+  return  array.filter(element => {
     const isDuplicate = uniqueIds.includes(element[property]);
 
     if (!isDuplicate) {
       uniqueIds.push(element[property]);
-
       return true;
     }
-
     return false;
   });
-
-  return unique;
 }
 
 const loadIngredients = (fromRecipes) => {
   const ingredients = [];
-  for (const recipe of fromRecipes) {
-    for (const ingredient of recipe.ingredients) {
+  fromRecipes.forEach((recipe) => {
+    recipe.ingredients.forEach((ingredient) => {
       ingredients.push({
         name: ingredient.ingredient,
         isSelected: false
       });
-    }
-  }
+    });
+  });
   return removeDuplicateObjects(ingredients, "name");
 };
 
@@ -64,7 +59,6 @@ const loadUstensils = (fromRecipes) => {
   }
   return removeDuplicateObjects(ustensils, "name");
 };
-
 
 const debounce = (callback, timeout = 200) => {
   let debounceTimeoutId = null;
@@ -94,12 +88,11 @@ const handleSelectIngredientOnSearchEvent = (searchTerms) => {
 
   const filteredResults = searchResult.filter((element) => {
 
-    const toto = element.ingredients.filter((ingredient) => {
-
-      return ingredient.ingredient === searchTerms;
+    const temp = element.ingredients.filter((ingredient) => {
+      return ingredient.ingredient.toLowerCase() === searchTerms.toLowerCase();
     });
 
-    return toto.length > 0;
+    return temp.length > 0;
   });
 
   searchResult = [...filteredResults];
@@ -111,18 +104,15 @@ const handleSelectIngredientOnSearchEvent = (searchTerms) => {
     searchTerms: searchTerms,
     result: filteredResults
   });
+
+  selectIngredients.updateListItem(loadIngredients(filteredResults));
 };
 
 const handleSelectApplianceOnSearchEvent = (searchTerms) => {
 
-  console.log("RECIPES ==> ", searchResult);
   const filteredResults = searchResult.filter((element) => {
-    console.log("SELECT APAREIL ==> ", searchTerms);
-    console.log("CHECK WITH = ", element.appliance);
-    console.log("IS FOUND = ", element.appliance === searchTerms);
     return element.appliance === searchTerms;
   });
-  console.log("SELECT RESULT ==> ", filteredResults);
 
   searchResult = [...filteredResults];
 
@@ -133,16 +123,18 @@ const handleSelectApplianceOnSearchEvent = (searchTerms) => {
     searchTerms: searchTerms,
     result: filteredResults
   });
+
+  selectAppareils.updateListItem(loadAppareils(filteredResults));
 };
 
 const handleSelectUstensilsOnSearchEvent = (searchTerms) => {
   const filteredResults = searchResult.filter((element) => {
 
-    const toto = element.ustensils.filter((ustensils) => {
+    const temp = element.ustensils.filter((ustensils) => {
       return ustensils === searchTerms;
     });
 
-    return toto.length > 0;
+    return temp.length > 0;
   });
 
   searchResult = [...filteredResults];
@@ -154,16 +146,24 @@ const handleSelectUstensilsOnSearchEvent = (searchTerms) => {
     searchTerms: searchTerms,
     result: filteredResults
   });
+
+  selectUstensiles.updateListItem(loadUstensils(filteredResults));
 };
 
 const handleSelectOnResetEvent = () => {
-  recipes.searchRecipeExt(searchTerms, selectIngredients.selectedItems, selectAppareils.selectedItems, selectUstensiles.selectedItems )
+  recipes.searchRecipeExt(searchTerms, selectIngredients.listItem, selectAppareils.listItem, selectUstensiles.listItem )
+}
+
+const resetSelects = () => {
+  selectAppareils.updateListItem(loadAppareils(searchResult));
+  selectUstensiles.updateListItem(loadUstensils(searchResult));
+  selectIngredients.updateListItem(loadIngredients(searchResult));
 }
 
 const initializeEvents = () => {
   const searchValue = document.getElementById("search");
 
-  searchValue.addEventListener("input", () => {
+  searchValue.addEventListener("keyup", () => {
     searchTerms = searchValue.value;
     const callSearch = debounce(() => {
       searchRecipes(searchTerms);
@@ -189,17 +189,29 @@ document.addEventListener("DOMContentLoaded", () => {
     initialListItem: loadIngredients(recipes.data),
     searchEventCallback: handleSelectIngredientOnSearchEvent,
     deleteTagEventCallBack: (tags) => {
-      recipes.searchRecipeExt(searchTerms, tags, selectAppareils.selectedItems, selectUstensiles.selectedItems )
+      searchResult = recipes.searchRecipeExt(searchTerms, tags, selectAppareils.listItem, selectUstensiles.listItem )
+      recipes.displaySearchResult({
+        searchTerms: "",
+        result : searchResult
+      });
+
+      resetSelects();
     },
     resetEventCallBack: handleSelectOnResetEvent
   });
+
   selectAppareils = new Select({
     selectElement: "#selectAppareils",
     defaultSelectLabel: "Appareils",
     initialListItem: loadAppareils(recipes.data),
     searchEventCallback: handleSelectApplianceOnSearchEvent,
     deleteTagEventCallBack: (tags) => {
-      recipes.searchRecipeExt(searchTerms, selectIngredients.selectedItems, tags, selectUstensiles.selectedItems )
+      searchResult = recipes.searchRecipeExt(searchTerms, selectIngredients.listItem, tags, selectUstensiles.listItem )
+      recipes.displaySearchResult({
+        searchTerms: "",
+        result : searchResult
+      });
+      resetSelects();
     },
     resetEventCallBack: handleSelectOnResetEvent
   });
@@ -209,7 +221,12 @@ document.addEventListener("DOMContentLoaded", () => {
     initialListItem: loadUstensils(recipes.data),
     searchEventCallback: handleSelectUstensilsOnSearchEvent,
     deleteTagEventCallBack: (tags) => {
-      recipes.searchRecipeExt(searchTerms, selectIngredients.selectedItems, selectAppareils.selectedItems, tags )
+      searchResult = recipes.searchRecipeExt(searchTerms, selectIngredients.listItem, selectAppareils.listItem, tags )
+      recipes.displaySearchResult({
+        searchTerms: "",
+        result : searchResult
+      });
+      resetSelects();
     },
     resetEventCallBack: handleSelectOnResetEvent
   });

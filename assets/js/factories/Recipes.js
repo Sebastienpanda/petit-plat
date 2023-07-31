@@ -1,5 +1,4 @@
 import { recipes } from "../../../data/recipes.js";
-import { Select } from "./Select.js";
 
 export class Recipes {
   #data = [];
@@ -61,48 +60,33 @@ export class Recipes {
   }
 
   _hasIngredientMatch(ingredients, searchTerm) {
-    ingredients.map((anIngredient) => {
-      const { ingredient  } = anIngredient;
-      if (ingredient.toLowerCase() === searchTerm.toLowerCase()) {
-        return true;
-      }
-    })
-    return false;
+    const matchingIngredients = ingredients.filter((anIngredient) => {
+      const { ingredient } = anIngredient;
+      return ingredient.toLowerCase() === searchTerm.toLowerCase();
+    });
+    return matchingIngredients.length > 0;
   }
 
   _hasAppareilMatch(anAppareil, searchTerm) {
-    if (anAppareil.toLowerCase().includes(searchTerm)) {
-      return true;
-    }
-    return false;
+    return anAppareil.toLowerCase().includes(searchTerm);
   }
 
-  _hasUstensilMatch(ustensils, searchTerm) {
-    ustensils.map((anUstensil) => {
-      if (anUstensil.toLowerCase().includes(searchTerm)) {
-        return true;
-      }
-    })
-    return false;
+  _hasUstensilesMatch(ustensiles, searchTerm) {
+    const matchingUstensiles = ustensiles.filter((anUstensile) => {
+      return anUstensile.toLowerCase() === searchTerm.toLowerCase();
+    });
+    return matchingUstensiles.length > 0;
   }
 
   searchRecipes(searchTerms) {
-    const filteredRecipes = [];
-    searchTerms = searchTerms.trim().toLowerCase();
-    this.#data.map((recipe) => {
+    searchTerms = searchTerms.toLowerCase()
+    return this.#data.filter((recipe) => {
       const { name, description, ingredients } = recipe;
       const lowerCaseName = name.toLowerCase();
       const lowerCaseDescription = description.toLowerCase();
       const hasIngredient = this._hasIngredientMatch(ingredients, searchTerms);
-      if (
-        lowerCaseName.includes(searchTerms) ||
-        lowerCaseDescription.includes(searchTerms) ||
-        hasIngredient
-      ) {
-        filteredRecipes.push(recipe);
-      }
+      return lowerCaseName.includes(searchTerms) || lowerCaseDescription.includes(searchTerms) || hasIngredient;
     })
-    return filteredRecipes;
   }
 
   searchRecipeExt(searchTerms, ingredientTags, appareilTags, ustensilTags) {
@@ -110,60 +94,65 @@ export class Recipes {
 
     searchTerms = searchTerms.trim();
     if (searchTerms !== "") {
-      this.#data.map((recipe) => {
-        const { name, description } = recipe;
-        const lowerCaseName = name.toLowerCase();
-        const lowerCaseDescription = description.toLowerCase();
-        if (lowerCaseName.includes(searchTerms) || lowerCaseDescription.includes(searchTerms)) {
-          filteredRecipes.push(recipe);
-        }
-      });
+      filteredRecipes = this.searchRecipes(searchTerms);
     }
 
     if (filteredRecipes.length === 0) {
-      filteredRecipes = [...this.#data]
+      filteredRecipes = [...this.#data];
     }
 
-
-    if ((ingredientTags !== null) && (ingredientTags.length > 0)) {
-      let filteredRecipesByIngredient = []
-      ingredientTags.forEach((searchTerms) => {
-        const tempFilteredRecipes= filteredRecipes.filter((recipe) => {
-          const temp = recipe.ingredients.filter((ingredient) => {
-            return ingredient.ingredient.toLowerCase() === searchTerms.toLowerCase();
+      let filteredRecipesByIngredient = [];
+      ingredientTags.forEach((anIngredient) => {
+        if (anIngredient.isSelected) {
+          const tempFilteredRecipes = filteredRecipes.filter((recipe) => {
+            const matchingIngredients = recipe.ingredients.filter((item) => {
+              const { ingredient } = item;
+              return ingredient.toLowerCase() === anIngredient.name.toLowerCase();
+            });
+            return matchingIngredients.length > 0;
           });
-          return temp.length > 0;
-        });
-        filteredRecipesByIngredient = [...filteredRecipesByIngredient, ...tempFilteredRecipes];
-      });
-      filteredRecipes = [...filteredRecipesByIngredient];
-    }
-
-    if ((appareilTags !== null) && (ingredientTags.length > 0)) {
-      filteredRecipes.map((recipe) => {
-        const { appliance } = recipe;
-        appareilTags.forEach((tag) => {
-          const hasAppareil = this._hasAppareilMatch(appliance, tag);
-          if (hasAppareil) {
-            filteredRecipes.push(recipe);
-          }
-        })
+          filteredRecipesByIngredient = [
+            ...filteredRecipesByIngredient,
+            ...tempFilteredRecipes,
+          ];
+        }
       })
-    }
+      if (filteredRecipesByIngredient.length > 0) {
+        filteredRecipes = [...filteredRecipesByIngredient];
+      }
 
-
-    if ((ustensilTags !== null) && (ustensilTags.length > 0)) {
-      filteredRecipes.map((recipe) => {
-        const { ustensils } = recipe;
-        ustensilTags.forEach((tag) => {
-          const hasUstensil = this._hasUstensilMatch(ustensils, tag);
-          if (hasustensil) {
-            filteredRecipes.push(recipe);
-          }
-        })
+      let filteredRecipesByAppareil = [];
+      appareilTags.forEach((anAppareil) => {
+        if (anAppareil.isSelected) {
+          const tempFilteredRecipes = filteredRecipes.filter((recipe) => {
+            return this._hasAppareilMatch(recipe.appliance, anAppareil.name)
+          });
+          filteredRecipesByAppareil = [
+            ...filteredRecipesByAppareil,
+            ...tempFilteredRecipes,
+          ];
+        }
       })
-    }
-    this.displayRecipes(filteredRecipes);
+      if (filteredRecipesByAppareil.length > 0) {
+        filteredRecipes = [...filteredRecipesByAppareil];
+      }
+
+      let filteredRecipesByUstensiles = [];
+      ustensilTags.forEach((anUstensile) => {
+        if (anUstensile.isSelected) {
+          const tempFilteredRecipes = filteredRecipes.filter((recipe) => {
+            return this._hasUstensilesMatch(recipe.ustensils, anUstensile.name)
+          });
+          filteredRecipesByUstensiles = [
+            ...filteredRecipesByUstensiles,
+            ...tempFilteredRecipes,
+          ];
+        }
+      })
+      if (filteredRecipesByUstensiles.length > 0) {
+        filteredRecipes = [...filteredRecipesByUstensiles];
+      }
+    return filteredRecipes
   }
 
   displayRecipes(recipes) {

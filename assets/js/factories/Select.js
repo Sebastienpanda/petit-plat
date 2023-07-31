@@ -7,7 +7,6 @@ export class Select {
   #defaultLabel = "";
   #selectedItem = "";
   #tags = null;
-  #img = null;
   #btnLabel = null;
 
 
@@ -17,7 +16,6 @@ export class Select {
 
   #listItem = [];
   #initialListItems = [];
-  #selectedItems = [];
 
   constructor({
                 selectElement = null,
@@ -30,7 +28,7 @@ export class Select {
     if (selectElement === null) {
       throw Error("HTML Select is required !");
     }
-    if (typeof selectElement === "String") {
+    if (typeof selectElement !== "string") {
       this.#select = selectElement;
     } else {
       this.#select = document.querySelector(selectElement);
@@ -50,7 +48,7 @@ export class Select {
     this.#tags = document.getElementById("tags");
     this.#defaultLabel = defaultSelectLabel;
 
-    this.#onSearchEvent = searchEventCallback; //onSearch(ingredientSelected);
+    this.#onSearchEvent = searchEventCallback;
     this.#onResetEvent = resetEventCallBack;
     this.#onDeleteTagEvent = deleteTagEventCallBack;
 
@@ -67,10 +65,57 @@ export class Select {
 
   #createListItem(listOfItems) {
     this.#options.innerHTML = "";
-    listOfItems.map((item) => {
+    listOfItems.forEach((item) => {
       this._createItem(item);
     });
     this.#optionsItems = this.#options.querySelectorAll("li");
+  }
+
+  #deselectItemByName(name) {
+    this.#optionsItems.forEach((li) => {
+      if (li.innerText === name) {
+        li.classList.remove("selected");
+      }
+    });
+
+    this.#listItem = this.#listItem.map((item) => {
+      if (item.name === name) {
+        item.isSelected = false
+      }
+      return item
+    });
+  }
+
+  #removeTag(tagToRemove) {
+    console.log('REMOVE TAGS :', tagToRemove.innerText )
+    // deselect item
+    this.#tags.removeChild(tagToRemove);
+    this.#deselectItemByName(tagToRemove.innerText)
+
+    this.#select.classList.toggle("select--active");
+
+    if (this.#onDeleteTagEvent) {
+      console.log("ON DELETE TAG EVENT");
+      this.#onDeleteTagEvent(this.listItem)
+    }
+
+  }
+
+  #createTag(name) {
+    const newTag = document.createElement("span");
+    const image = document.createElement("img");
+    image.className = "img";
+    image.src = "../../../assets/header/Vector.svg";
+    image.alt = "Vector cross";
+    newTag.textContent = name;
+
+
+    newTag.appendChild(image);
+    newTag.addEventListener("click", (event) => {
+      this.#removeTag(event.target.parentNode)
+    });
+
+    this.#tags.appendChild(newTag);
   }
 
   _setupEventListeners() {
@@ -90,47 +135,21 @@ export class Select {
       this.#searchInput.value = "";
       this.#btnLabel.innerText = this.#defaultLabel;
     } else {
+      console.log('OPTIONS === > ',this.#optionsItems)
       this.#optionsItems.forEach((li) => {
         li.classList.remove("selected");
       });
       currentLi.classList.add("selected");
       this.#btnLabel.innerText = currentLi.innerText;
       this.#selectedItem = currentLi.innerText;
-      const newTag = document.createElement("span");
-      const image = document.createElement("img");
-      image.className = "img";
-      image.src = "../../../assets/header/Vector.svg";
-      image.alt = "Vector cross";
-      newTag.textContent = currentLi.innerText;
-      this.#selectedItems.push(currentLi.innerText);
 
-      newTag.appendChild(image);
-      newTag.addEventListener("click", (event) => {
-        const tagToRemove = event.target.parentNode;
-        console.log('SELECTED ITEMS BEFORE = ', this.#selectedItems)
-        console.log('REMOVE TAGS :', tagToRemove.innerText )
-        this.#selectedItems.splice(this.#selectedItems.indexOf(tagToRemove.innerText,0), 1);
-
-        this.#tags.removeChild(tagToRemove);
-        console.log('SELECTED ITEMS AFTER = ', this.#selectedItems)
-
-        if (this.#selectedItems.length === 0) {
-          this._unselectAllItems(true);
-          this.#select.classList.toggle("select--active");
-          return;
-        }
-        if (this.#onDeleteTagEvent) {
-          console.log("ON DELETE TAG EVENT");
-          this.#onDeleteTagEvent(this.#selectedItems)
-        }
-      });
-      this.#tags.appendChild(newTag);
+      this.#createTag(currentLi.innerText)
     }
 
-    this.#listItem.map((item) => {
+    this.#listItem = this.#listItem.map((item) => {
       return {
         name: item.name,
-        isSelected: item.name === currentLi.innerText && !item.isSelected
+        isSelected: item.name === currentLi.innerText //!item.isSelected
       };
     });
 
@@ -181,21 +200,31 @@ export class Select {
     }
   }
 
-  get selectedItem() {
-    return this.#selectedItem;
-  }
+  // get selectedItem() {
+  //   return this.#selectedItem;
+  // }
 
-  get selectedItems() {
-    return this.#selectedItems;
+  get listItem() {
+    return this.#listItem;
   }
 
   updateListItem(newListItem) {
-    this.#listItem = [...newListItem];
+    const updatedListItem = newListItem.map( (item) => {
+      const index = this.#listItem.findIndex((findItem) => item.name === findItem.name)
+      if (index >= 0) {
+        return {
+          name: item.name,
+          isSelected: this.#listItem[index].isSelected
+        }
+      }
+      return item;
+    })
+
+    this.#listItem = [...updatedListItem];
     this.#createListItem(this.#listItem);
   }
 
   reset() {
-    //this.#optionsItems = null;
     this.#selectedItem = "";
     this._unselectAllItems();
     this.#tags.innerHTML = "";
