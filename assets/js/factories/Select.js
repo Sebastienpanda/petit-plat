@@ -196,7 +196,7 @@ export class Select {
     if (filteredItems.length > 0) {
       this.#createListItem(filteredItems);
     } else {
-      this.#options.innerHTML = "<p> Aucun ingrédient </p>";
+      this.#options.innerHTML = "<p class='noIngredient'> Aucun ingrédient </p>";
     }
   }
 
